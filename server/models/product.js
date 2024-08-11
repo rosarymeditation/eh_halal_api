@@ -10,7 +10,7 @@ const productSchema = new mongoose.Schema({
   percentageDiscount: { type: Number, default: 0 },
   weight: { type: String, default: 0 },
   description: { type: String },
-  isPopular: { type: Boolean, default: true },
+  isPopular: { type: Boolean, default: false },
   isLocal: { type: Boolean, default: false },
   canShow: { type: Boolean, default: true },
   // stock: {
