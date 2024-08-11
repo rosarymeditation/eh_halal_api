@@ -651,12 +651,14 @@ module.exports = {
             .populate("category")
             .populate("images")
             .populate("weightType")
+            .sort({ createdAt: 1 })
         : await Product.find({ canShow: true })
             .skip((page - 1) * limit) // Skip documents based on the current page
             .limit(limit)
             .populate("category")
             .populate("images")
-            .populate("weightType");
+            .populate("weightType")
+            .sort({ createdAt: 1 });
       const filterData = await Promise.all(
         data.map(async (item) => {
           // Map through each variation and handle async operations
