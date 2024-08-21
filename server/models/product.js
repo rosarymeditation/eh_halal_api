@@ -13,10 +13,7 @@ const productSchema = new mongoose.Schema({
   isPopular: { type: Boolean, default: false },
   isLocal: { type: Boolean, default: false },
   canShow: { type: Boolean, default: true },
-  // stock: {
-  //   type: Number,
-  //   default: 100,
-  // },
+  createdAt: { type: Date, default: Date.now },
   images: [{ type: mongoose.Schema.Types.ObjectId, ref: "Image" }],
   isAvailable: { type: Boolean, default: true },
   category: {

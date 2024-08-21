@@ -91,6 +91,8 @@ require(`${refPath}productReminder`)(app);
 require(`${refPath}status`)(app);
 require(`${refPath}banner`)(app);
 require(`${refPath}setting`)(app);
+require(`${refPath}city`)(app);
+require(`${refPath}storeAddress`)(app);
 
 app.use((err, req, res, next) => res.json(err));
 

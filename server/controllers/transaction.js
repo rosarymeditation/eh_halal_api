@@ -223,6 +223,7 @@ module.exports = {
         const data = Transaction({
           totalId: totalData._id,
           name: item.name,
+          weightDisplay: item.weightDisplay,
           product: item.id,
           price: item.price,
           quantity: item.quantity,

@@ -13,6 +13,7 @@ module.exports = (app) => {
     controller.createWithNoImage
   );
   app.post(rootUrl("category/all"), controller.findAll);
+  app.post(rootUrl("category/allForUser"), controller.findAllForUser);
   app.post(rootUrl("findCondimentCategory"), controller.findCondimentCategory);
   app.post(rootUrl("findSeafoodCategory"), controller.findSeafoodCategory);
   app.post(rootUrl("findDrinkCategory"), controller.findDrinkCategory);
