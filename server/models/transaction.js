@@ -4,11 +4,13 @@ const transactionSchema = new mongoose.Schema({
   name: { type: String, required: true },
   price: { type: String, default: 0 },
   quantity: { type: String },
+  weightDisplay: { type: String },
   product: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
     required: true,
   },
+  hasPaid: { type: Boolean, default: false },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

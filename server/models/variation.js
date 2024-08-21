@@ -18,6 +18,12 @@ const variationSchema = new mongoose.Schema({
     type: Number,
     required: true, // e.g., 4 pieces
   },
+  canShow: { type: Boolean, default: true },
+  isAvailable: {
+    type: Boolean,
+    default: true,
+    required: true, // e.g., 4 pieces
+  },
 
   price: {
     type: Number,

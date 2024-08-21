@@ -20,33 +20,36 @@ module.exports = {
       // mileRadius: { type: Number, default: 5 },
       // isShowSalePercent: { type: Boolean, default: false },
       // pricePerItem: { type: Number, default: 0 },t = req.file;
-
+      // minOrder: { type: String, default: 10 },
+      // freeDeliveryAmount: { type: String, default: 0 },
+      // lastDeliveryHour: { type: String, default: 18 },
       const {
         deliveryStandard,
-        deliveryPremium,
         mileRadius,
-        isShowSalePercent,
-        pricePerItem,
+        minOrder,
+        freeDeliveryAmount,
+        lastDeliveryHour,
       } = req.body;
+      console.log(req.body);
       let data;
       const getSettings = await Setting.find();
       if (getSettings.length == 0) {
         data = Setting({
           deliveryStandard,
-          deliveryPremium,
           mileRadius,
-          isShowSalePercent,
-          pricePerItem,
+          minOrder,
+          freeDeliveryAmount,
+          lastDeliveryHour,
         });
         await data.save();
       } else {
         const options = { new: true };
         const updatedData = {
           deliveryStandard,
-          deliveryPremium,
           mileRadius,
-          isShowSalePercent,
-          pricePerItem,
+          minOrder,
+          freeDeliveryAmount,
+          lastDeliveryHour,
         };
         const result = await Setting.findByIdAndUpdate(
           getSettings[0]._id,
@@ -66,7 +69,9 @@ module.exports = {
   findAll: async (req, res) => {
     try {
       const data = await Setting.find();
-
+      if (data.length == 0) {
+        return res.status(SERVER_ERROR).send({});
+      }
       return res.status(OK).send(data[0]);
     } catch (err) {
       return res.status(SERVER_ERROR).send({ error: true, message: err });

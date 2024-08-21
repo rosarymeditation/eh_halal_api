@@ -178,6 +178,21 @@ module.exports = {
       return res.status(SERVER_ERROR).send({ error: true, message: err });
     }
   },
+  findAllForUser: async (req, res) => {
+    try {
+      const categoryIdsWithProducts = await Product.distinct("category");
+
+      // Find categories with those IDs and where canShow is true
+      const categoriesWithProducts = await Category.find({
+        _id: { $in: categoryIdsWithProducts },
+        canShow: true,
+      });
+
+      return res.status(OK).send({ data: categoriesWithProducts });
+    } catch (err) {
+      return res.status(SERVER_ERROR).send({ error: true, message: err });
+    }
+  },
 
   delete: async (req, res) => {
     try {

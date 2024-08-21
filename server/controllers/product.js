@@ -171,6 +171,7 @@ module.exports = {
                 weightTypeId: variation.weightType._id,
                 serial: variation.serial,
                 weightType: weightType || null,
+                isAvailable: variation.isAvailable,
                 quantity: variation.quantity,
                 price: parseFloat(variation.price),
               };
@@ -263,7 +264,7 @@ module.exports = {
         variations,
       } = req.body;
       console.log("variations---------------------------");
-      console.log(id);
+      console.log(req.body);
 
       console.log("variations---------------------------");
 
@@ -389,6 +390,7 @@ module.exports = {
             weightTypeId: variation.weightType._id,
             serial: variation.serial,
             weightType: weightType || null,
+            isAvailable: variation.isAvailable,
             quantity: variation.quantity,
             price: parseFloat(variation.price),
           };
@@ -651,14 +653,14 @@ module.exports = {
             .populate("category")
             .populate("images")
             .populate("weightType")
-            .sort({ createdAt: 1 })
+            .sort({ createdAt: -1 })
         : await Product.find({ canShow: true })
             .skip((page - 1) * limit) // Skip documents based on the current page
             .limit(limit)
             .populate("category")
             .populate("images")
             .populate("weightType")
-            .sort({ createdAt: 1 });
+            .sort({ createdAt: -1 });
       const filterData = await Promise.all(
         data.map(async (item) => {
           // Map through each variation and handle async operations
@@ -675,6 +677,7 @@ module.exports = {
                 weightTypeId: variation.weightType._id,
                 serial: variation.serial,
                 weightType: weightType || null,
+                isAvailable: variation.isAvailable,
                 quantity: variation.quantity,
                 price: parseFloat(variation.price),
               };
@@ -844,6 +847,7 @@ module.exports = {
                 weightTypeId: variation.weightType._id,
                 serial: variation.serial,
                 weightType: weightType || null,
+                isAvailable: variation.isAvailable,
                 quantity: variation.quantity,
                 price: parseFloat(variation.price),
               };
@@ -913,6 +917,7 @@ module.exports = {
                 weightTypeId: variation.weightType._id,
                 serial: variation.serial,
                 weightType: weightType || null,
+                isAvailable: variation.isAvailable,
                 quantity: variation.quantity,
                 price: parseFloat(variation.price),
               };
@@ -977,6 +982,7 @@ module.exports = {
                 serial: variation.serial,
                 weightType: weightType || null,
                 quantity: variation.quantity,
+                isAvailable: variation.isAvailable,
                 price: parseFloat(variation.price),
               };
             })
@@ -1038,6 +1044,7 @@ module.exports = {
                 serial: variation.serial,
                 weightType: weightType || null,
                 quantity: variation.quantity,
+                isAvailable: variation.isAvailable,
                 price: parseFloat(variation.price),
               };
             })
@@ -1072,16 +1079,57 @@ module.exports = {
       const { page = 1, limit = 10 } = req.body;
 
       const data = await Product.find({
-        salePrice: { $gt: 0 },
+        percentageDiscount: { $gt: 0 },
         canShow: true,
         isAvailable: true,
       })
         .skip((page - 1) * limit) // Skip documents based on the current page
         .limit(limit)
         .populate("category")
-        .populate("images")
-        .populate("weightType");
-      return res.status(OK).send({ data: data });
+        .populate("images");
+
+      const filterData = await Promise.all(
+        data.map(async (item) => {
+          // Map through each variation and handle async operations
+          const variations = await Promise.all(
+            item.variations.map(async (variation) => {
+              const finalPrice = item.getFinalPriceForVariation(
+                variation.price
+              );
+              const weightType = await WeightType.findById(
+                variation.weightType
+              );
+              return {
+                finalPrice,
+                weightTypeId: variation.weightType._id,
+                serial: variation.serial,
+                weightType: weightType || null,
+                quantity: variation.quantity,
+                isAvailable: variation.isAvailable,
+                price: parseFloat(variation.price),
+              };
+            })
+          );
+
+          return {
+            _id: item._id,
+            name: item.name,
+            price: item.price,
+            slug: item.slug,
+            serial: item.serial,
+            isAvailable: item.isAvailable,
+            category: item.category,
+            images: item.images,
+            percentageDiscount: item.percentageDiscount,
+            description: item.description,
+            isPopular: item.isPopular,
+            canShow: item.canShow,
+            variations: variations.length > 0 ? variations : null, // Include the processed variations
+          };
+        })
+      );
+
+      return res.status(OK).send({ data: filterData });
     } catch (err) {
       console.log(err);
       return res.status(SERVER_ERROR).send({ error: true, message: err });
