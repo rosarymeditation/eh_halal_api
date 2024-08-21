@@ -149,7 +149,7 @@ module.exports = {
       numbersToSend.forEach((number) => {
         client.messages
           .create({
-            body: `${findUser.firstname}, ordered from AfroFoodMart and order total is £${total}`,
+            body: `${findUser.firstname}, ordered from Edinburgh Halal and order total is £${total}`,
             from: "Afro Food", // Your Twilio phone number
             to: number,
           })
@@ -256,7 +256,7 @@ module.exports = {
       numbersToSend.forEach((number) => {
         client.messages
           .create({
-            body: `${findUser.firstname}, ordered from AfroFoodMart and order total is £${total}`,
+            body: `${findUser.firstname}, ordered from Edinburgh Halal and order total is £${total}`,
             from: "Afro Food", // Your Twilio phone number
             to: number,
           })
@@ -362,7 +362,7 @@ module.exports = {
       numbersToSend.forEach((number) => {
         client.messages
           .create({
-            body: `${findUser.firstname}, ordered from AfroFoodMart and order total is £${total}`,
+            body: `${findUser.firstname}, ordered from Edinburgh Halal and order total is £${total}`,
             from: "Afro Food", // Your Twilio phone number
             to: number,
           })
