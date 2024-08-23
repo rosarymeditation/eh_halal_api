@@ -93,6 +93,7 @@ require(`${refPath}banner`)(app);
 require(`${refPath}setting`)(app);
 require(`${refPath}city`)(app);
 require(`${refPath}storeAddress`)(app);
+require(`${refPath}coupon`)(app);
 
 app.use((err, req, res, next) => res.json(err));
 
