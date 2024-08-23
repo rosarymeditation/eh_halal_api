@@ -161,11 +161,15 @@ module.exports = {
         if (data.discountType === "Fixed") {
           const grantTotal = parseFloat(data.discountValue) - total;
           console.log(data.discountValue);
-          return res.status(OK).send({ grantTotal: grantTotal });
+          return res
+            .status(OK)
+            .send({ grantTotal: grantTotal, discount: `£${discountValue}` });
         } else {
           const percentageValue = data.discountValue / 100;
           const grantTotal = total - percentageValue * total;
-          return res.status(OK).send({ grantTotal });
+          return res
+            .status(OK)
+            .send({ grantTotal, discount: `%${discountValue}` });
         }
       }
     } catch (err) {
