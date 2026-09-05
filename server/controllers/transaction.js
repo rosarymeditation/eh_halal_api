@@ -10,7 +10,7 @@ const Status = require("../models/status");
 const Total = require("../models/total");
 const twilio = require("twilio");
 const Reward = require("../models/reward");
-const { upload, rand, pointDispatcher } = require("../utility/global");
+const { upload, rand, pointDispatcher , getLatLong} = require("../utility/global");
 const mongoose = require("mongoose");
 const { email1 } = require("../utility/constants");
 const { SERVER_ERROR, OK } = require("../errors/statusCode");
@@ -35,33 +35,7 @@ const getMonthRange = (year, month) => {
   const endOfMonth = new Date(year, month + 1, 1);
   return { startOfMonth, endOfMonth };
 };
-async function getLatLong(address) {
-  try {
-    const response = await axios.get(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-        address
-      )}.json`,
-      {
-        params: {
-          access_token:
-            "REDACTED_MAPBOX_TOKEN",
-        },
-      }
-    );
 
-    if (response.data.features.length > 0) {
-      const location = response.data.features[0].center;
-      const latitude = location[1];
-      const longitude = location[0];
-      return { latitude, longitude };
-    } else {
-      throw new Error("No results found");
-    }
-  } catch (error) {
-    console.error("Error fetching geolocation:", error.message);
-    return null;
-  }
-}
 module.exports = {
   create: async (req, res) => {
     try {

@@ -1,5 +1,5 @@
 const Address = require("../models/storeAddress");
-const { upload } = require("../utility/global");
+const { upload , getLatLong} = require("../utility/global");
 const axios = require("axios");
 
 const {
@@ -9,33 +9,7 @@ const {
   Messages,
 } = require("../errors/statusCode");
 // const query = new Query(PostCode);
-async function getLatLong(address) {
-  try {
-    const response = await axios.get(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-        address
-      )}.json`,
-      {
-        params: {
-          access_token:
-            "REDACTED_MAPBOX_TOKEN",
-        },
-      }
-    );
 
-    if (response.data.features.length > 0) {
-      const location = response.data.features[0].center;
-      const latitude = location[1];
-      const longitude = location[0];
-      return { latitude, longitude };
-    } else {
-      throw new Error("No results found");
-    }
-  } catch (error) {
-    console.error("Error fetching geolocation:", error.message);
-    return null;
-  }
-}
 module.exports = {
   create: async (req, res) => {
     try {

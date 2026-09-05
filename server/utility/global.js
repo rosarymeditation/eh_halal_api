@@ -1,6 +1,7 @@
 const aws = require("aws-sdk");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
+const axios = require("axios");
 const jwt = require("jsonwebtoken");
 const { FAILED_AUTH, OK } = require("../errors/statusCode");
 const { ACCESS_TOKEN } = require("../utility/constants");
@@ -27,7 +28,27 @@ function randomAlpabet() {
 function rand(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
-
+const getLatLong = async (address) => {
+  try {
+    const response = await axios.get(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json`,
+      {
+        params: {
+          access_token: process.env.MAPBOX_ACCESS_TOKEN,
+        },
+      }
+    );
+    if (response.data.features.length > 0) {
+      const location = response.data.features[0].center;
+      return { latitude: location[1], longitude: location[0] };
+    } else {
+      throw new Error("No results found");
+    }
+  } catch (error) {
+    console.error("Error fetching geolocation:", error.message);
+    return null;
+  }
+};
 function getConvertedDate() {
   let options = {
     timeZone: "Europe/London",
@@ -240,4 +261,5 @@ module.exports = {
   CapitalizeFirstLetter,
   pointDispatcher,
   formatSlug,
+  getLatLong
 };
