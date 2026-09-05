@@ -77,7 +77,7 @@ const templates = () => {
     platformOrderAlert: "d-5d81ed37f7a94d6f9a64f394e7f2ec48",
     passwordReset: "REDACTED_TEMPLATE_ID",
     passwordResetCode: "REDACTED_TEMPLATE_ID",
-    passwordResetWeb:"REDACTED_TEMPLATE_ID"
+    passwordResetWeb: "REDACTED_TEMPLATE_ID"
   };
 };
 
@@ -138,6 +138,10 @@ const contactOptions = (email, reason, message, fullname) => {
   };
 };
 const send = function (option) {
+  // FIX: was a hardcoded SMTP password in plaintext -- the same
+  // password value already found and rotated in afromigo_server
+  // earlier today, confirming reuse across multiple repos. Moved to
+  // an environment variable.
   const transporter = nodemailer.createTransport({
     host: "mail.foodengo.co.uk",
     port: 2525,
@@ -146,10 +150,10 @@ const send = function (option) {
     },
     auth: {
       user: option.sender,
-      pass: `REDACTED_SMTP_PASSWORD`,
+      pass: process.env.FOODENGO_SMTP_PASS,
     },
   });
-  const send = transporter.sendMail(option, (error, info) => {
+  transporter.sendMail(option, (error, info) => {
     if (error) return null;
     else return info;
   });
