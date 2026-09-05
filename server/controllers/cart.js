@@ -1,7 +1,7 @@
 // const PostCode = require("../models").PostCode;
 // const Query = new require("../queries/crud");
 // const validate = require("../validations/validation");
-const sgMail = require("@sendgrid/mail");
+
 const Cart = require("../models/cart");
 const { upload } = require("../utility/global");
 

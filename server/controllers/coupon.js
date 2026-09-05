@@ -146,7 +146,6 @@ module.exports = {
   redeem: async (req, res) => {
     try {
       let { coupon, total } = req.body;
-
       if (total) {
         total = parseFloat(total);
       }
@@ -161,15 +160,23 @@ module.exports = {
         if (data.discountType === "Fixed") {
           const grantTotal = parseFloat(data.discountValue) - total;
           console.log(data.discountValue);
+          // FIX: was `${discountValue}` -- `discountValue` was never
+          // defined anywhere in this function's scope, only
+          // `data.discountValue` existed. This threw a ReferenceError
+          // on every single successful redemption attempt, which the
+          // outer catch block swallowed and reported as a generic
+          // SERVER_ERROR -- meaning valid, unexpired coupons always
+          // appeared to fail redemption. Confirmed live via test.
           return res
             .status(OK)
-            .send({ grantTotal: grantTotal, discount: `£${discountValue}` });
+            .send({ grantTotal: grantTotal, discount: `£${data.discountValue}` });
         } else {
           const percentageValue = data.discountValue / 100;
           const grantTotal = total - percentageValue * total;
+          // FIX: same bug as above, in the percentage-discount branch.
           return res
             .status(OK)
-            .send({ grantTotal, discount: `%${discountValue}` });
+            .send({ grantTotal, discount: `%${data.discountValue}` });
         }
       }
     } catch (err) {

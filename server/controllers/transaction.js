@@ -1,9 +1,5 @@
-// const PostCode = require("../models").PostCode;
-// const Query = new require("../queries/crud");
-// const validate = require("../validations/validation");
-const sgMail = require("@sendgrid/mail");
+
 const axios = require("axios");
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const Transaction = require("../models/transaction");
 const Address = require("../models/address");
 const Status = require("../models/status");
@@ -109,13 +105,7 @@ module.exports = {
           order_num: refNum,
         },
       };
-      sgMail.send(msg, (error, result) => {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log("That's wassup!");
-        }
-      });
+     
       numbersToSend.forEach((number) => {
         client.messages
           .create({
@@ -217,13 +207,7 @@ module.exports = {
         },
       };
 
-      sgMail.send(msg, (error, result) => {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log("That's wassup!");
-        }
-      });
+      
       numbersToSend.forEach((number) => {
         client.messages
           .create({
@@ -323,13 +307,7 @@ module.exports = {
         },
       };
 
-      sgMail.send(msg, (error, result) => {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log("That's wassup!");
-        }
-      });
+     
       numbersToSend.forEach((number) => {
         client.messages
           .create({

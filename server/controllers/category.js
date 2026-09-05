@@ -1,8 +1,5 @@
-// const PostCode = require("../models").PostCode;
-// const Query = new require("../queries/crud");
-// const validate = require("../validations/validation");
-const sgMail = require("@sendgrid/mail");
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+
 const Category = require("../models/category");
 const Product = require("../models/product");
 const { upload } = require("../utility/global");

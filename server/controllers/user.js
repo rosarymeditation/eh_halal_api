@@ -1,8 +1,4 @@
-// const PostCode = require("../models").PostCode;
-// const Query = new require("../queries/crud");
-// const validate = require("../validations/validation");
-const sgMail = require("@sendgrid/mail");
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
 const {
   SERVER_ERROR,
   OK,
@@ -346,13 +342,7 @@ module.exports = {
           },
         };
 
-        sgMail.send(msg, (error, result) => {
-          if (error) {
-            console.log(error);
-          } else {
-            console.log("That's wassup!");
-          }
-        });
+       
         return res.status(OK).send({ message: "Successful" });
       } else {
         return res.status(OK).send({ message: "Email found" });
