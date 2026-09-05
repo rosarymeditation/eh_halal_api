@@ -10,7 +10,7 @@ const Status = require("../models/status");
 const Total = require("../models/total");
 const twilio = require("twilio");
 const Reward = require("../models/reward");
-const { upload, rand, pointDispatcher , getLatLong} = require("../utility/global");
+const { upload, rand, pointDispatcher, getLatLong } = require("../utility/global");
 const mongoose = require("mongoose");
 const { email1 } = require("../utility/constants");
 const { SERVER_ERROR, OK } = require("../errors/statusCode");
@@ -24,7 +24,7 @@ const stripe = require("stripe")(process.env.STRIPE);
 const numbersToSend = ["+447857965032", "+447935885977"];
 // const query = new Query(PostCode);
 function roundUp(num) {
-  var num = 10.12345;
+
   var precision = 2;
   var formattedNumber =
     Math.round(num * Math.pow(10, precision)) / Math.pow(10, precision);
@@ -52,15 +52,12 @@ module.exports = {
         deliveryDay,
         message,
       } = req.body;
-
       const refNum = rand(11111111, 99999999);
       const findUser = await User.findById(id);
-
       const currentDate = new Date();
       const day = currentDate.getDate();
-      const month = currentDate.getMonth() + 1; // Months are zero-indexed, so
+      const month = currentDate.getMonth() + 1;
       const year = currentDate.getFullYear();
-      //const getAddress = await Address.findOne({ userId: id, isDefault: true });
       const findStatus = await Status.findOne({ name: "Pending" });
       const totalData = Total({
         day: day,
@@ -81,7 +78,7 @@ module.exports = {
       });
       await totalData.save();
       const itemArr = [];
-      productArray.forEach(async (item) => {
+      for (const item of productArray) {
         const itemTotal = item.quantity * item.price;
         itemArr.push({
           quantity: item.quantity,
@@ -97,7 +94,7 @@ module.exports = {
           user: id,
         });
         await data.save();
-      });
+      }
       const msg = {
         to: findUser.email,
         from: email1,
@@ -112,7 +109,6 @@ module.exports = {
           order_num: refNum,
         },
       };
-
       sgMail.send(msg, (error, result) => {
         if (error) {
           console.log(error);
@@ -124,7 +120,7 @@ module.exports = {
         client.messages
           .create({
             body: `${findUser.firstname}, ordered from Edinburgh Halal and order total is £${total}`,
-            from: "Afro Food", // Your Twilio phone number
+            from: "Afro Food",
             to: number,
           })
           .then((message) =>
@@ -142,6 +138,7 @@ module.exports = {
       return res.status(OK).send({ error: true });
     }
   },
+
 
   createForMobileLatest: async (req, res) => {
     try {
@@ -467,32 +464,35 @@ module.exports = {
       const totalData = await Total.findOne({ user: id }).sort({
         createdAt: -1,
       });
+      if (!totalData) {
+
+        return res.status(OK).send(null);
+      }
       const data = await Transaction.find({
         totalId: totalData._id,
       });
-      const status = await Status.findById(item.status);
+
+      const status = await Status.findById(totalData.status);
       const newObj = {
         total: totalData.total,
         subTotal: totalData.subTotal,
         deliveryPrice: totalData.deliveryPrice,
         discount: totalData.discount,
         address: totalData.address,
-        deliveryDay: item.deliveryDay,
-        lng: item.lng,
-        lat: item.lat,
+        deliveryDay: totalData.deliveryDay,
+        lng: totalData.lng,
+        lat: totalData.lat,
         status: status,
         transactions: data,
         createdAt: totalData.createdAt,
         transactionId: totalData.transactionId,
       };
-
       return res.status(OK).send(newObj);
     } catch (err) {
       console.log(err);
       return res.status(SERVER_ERROR).send({ error: true });
     }
   },
-
   getTotalByMonth: async (req, res) => {
     try {
       const currentYear = new Date().getFullYear();

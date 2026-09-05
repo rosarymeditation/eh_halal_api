@@ -21,65 +21,7 @@ const Address = require("../models/address");
 const Role = require("../models/role");
 
 module.exports = {
-  signUp: async (req, res) => {
-    try {
-      const { password, email, firstname, lastname, phone } = req.body;
-      const findEmail = await User.findOne({ email });
-
-      if (findEmail) {
-        return res.status(VALIDATION_ERROR).send({
-          error: true,
-          message: "Email already exist",
-        });
-      }
-      bcrypt.hash(password, 10, async (err, hash) => {
-        if (err) {
-          return res
-            .status(SERVER_ERROR)
-            .send({ message: "Error", error: true });
-        } else {
-          const dataObj = new User({
-            email: email,
-            password: hash,
-            role: "6530595ad24dd0acc26c71e1",
-            firstname: CapitalizeFirstLetter(firstname),
-            lastname: CapitalizeFirstLetter(lastname),
-            phone: phone,
-          });
-          try {
-            const data = await dataObj.save();
-            const token = jwt.sign(
-              {
-                id: data.id,
-                email: email,
-                firstname: firstname,
-                lastname: lastname,
-              },
-              secret,
-              {
-                expiresIn: "7000d",
-              }
-            );
-            // const user = await User.findById(data.id);
-            return res.status(OK).send({
-              error: false,
-              token: token,
-              userId: data.id,
-              user: data,
-            });
-          } catch (err) {
-            console.log(err);
-            return res.status(SERVER_ERROR).send({
-              error: true,
-              message: err,
-            });
-          }
-        }
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  },
+  
 
   signUpAdmin: async (req, res) => {
     try {
@@ -424,7 +366,6 @@ module.exports = {
     try {
       const { password, email, firstname, lastname, phone } = req.body;
       const findEmail = await User.findOne({ email, hasDeleted: false });
-
       if (findEmail) {
         return res.status(VALIDATION_ERROR).send({
           error: true,
@@ -459,11 +400,10 @@ module.exports = {
                 expiresIn: "7000d",
               }
             );
-            const user = await User.findById(data.id);
             return res.status(OK).send({
               error: false,
               token: token,
-              user: user,
+              user: data,
               userId: data.id,
             });
           } catch (err) {
@@ -478,8 +418,6 @@ module.exports = {
     } catch (err) {
       console.log(err);
     }
-
-    //return res.status(VALIDATION_ERROR).send({ message: error, error: true });
   },
 
   passwordVerification: async (req, res) => {
